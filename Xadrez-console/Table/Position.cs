@@ -1,4 +1,4 @@
-﻿namespace Table
+﻿namespace Xadrez_console.TableNS
 {
     class Position
     {
