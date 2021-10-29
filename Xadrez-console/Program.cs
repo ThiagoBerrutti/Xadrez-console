@@ -7,8 +7,9 @@ namespace Xadrez_console
     {
         static void Main(string[] args)
         {
-            Position p = new Position(3, 4);
+            
             Table tab = new Table(8, 8);
+            Display.PrintTable(tab);
         }
     }
 }
