@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xadrez_console.TableNS.Enums
+namespace TableNS.Enums
 {
     enum Color : int
     {
-        White,
-        Black
+        White = ConsoleColor.White,
+        Black = ConsoleColor.Yellow
     }
 }

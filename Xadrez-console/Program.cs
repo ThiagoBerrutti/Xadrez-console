@@ -1,5 +1,9 @@
 ﻿using System;
-using Xadrez_console.TableNS;
+using TableNS;
+using ChessGame.Pieces;
+using TableNS.Enums;
+using ChessGame;
+
 
 namespace Xadrez_console
 {
@@ -7,9 +11,10 @@ namespace Xadrez_console
     {
         static void Main(string[] args)
         {
-            
-            Table tab = new Table(8, 8);
-            Display.PrintTable(tab);
+
+            Chess Game = new Chess();
+            Game.SetTablePieces();
+            Display.PrintTable(Game.Table);
         }
     }
 }

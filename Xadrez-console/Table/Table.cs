@@ -1,4 +1,4 @@
-﻿namespace Xadrez_console.TableNS
+﻿namespace TableNS
 {
     class Table
     {
@@ -16,6 +16,12 @@
         public Piece GetPiece(int line, int column)
         {
             return Pieces[line, column];
+        }
+
+        public void InsertPiece(Piece piece, Position pos)
+        {
+            Pieces[pos.Line, pos.Column] = piece;
+            piece.Position = pos;
         }
 
     }

@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Xadrez_console.TableNS;
+using TableNS;
+using TableNS.Enums;
 
 namespace Xadrez_console
 {
     class Display
     {
+        
+
         public static void PrintTable(Table table)
         {
-            for (int y = 0; y < table.Columns; y++)
+            for (int x = 0; x < table.Lines; x++)
             {
-                for (int x = 0; x < table.Lines; x++)
+                for (int y = 0; y < table.Columns; y++)
                 {
-                    if (table.GetPiece(x, y) == null)
+                    Piece piece = table.GetPiece(x, y);
+                    if (piece == null)
                     {
+                        Console.ForegroundColor = ConsoleColor.Gray; 
                         Console.Write("- ");
                     }
                     else
-                    {
+                    {   
+                        Console.ForegroundColor = (ConsoleColor)piece.Color; ;
                         Console.Write($"{table.GetPiece(x, y)} ");
                     }
                 }
