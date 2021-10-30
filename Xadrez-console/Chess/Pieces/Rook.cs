@@ -1,7 +1,7 @@
 ﻿using TableNS;
 using TableNS.Enums;
 
-namespace ChessGame.Pieces
+namespace Chess.Pieces
 {
    
         class Rook : Piece

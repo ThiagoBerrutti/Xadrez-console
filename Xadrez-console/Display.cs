@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using TableNS;
 using TableNS.Enums;
+using Chess;
 
 namespace Xadrez_console
 {
     class Display
     {
-        
-
         public static void PrintTable(Table table)
         {
             for (int x = 0; x < table.Lines; x++)
@@ -40,6 +39,16 @@ namespace Xadrez_console
             Console.ForegroundColor = (ConsoleColor)piece.Color; ;
             Console.Write(piece);
             Console.ForegroundColor = oldColor;
+        }
+
+        public static ChessPosition ReadChessPosition()
+        {
+            string s = Console.ReadLine();
+            char column = s[0];
+            Console.WriteLine(column);
+            int line = int.Parse(s[1]+"");
+            Console.WriteLine(line);
+            return new ChessPosition(column, line);
         }
     }
 }

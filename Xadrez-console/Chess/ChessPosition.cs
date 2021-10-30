@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using TableNS;
 
-namespace ChessGame
+namespace Chess
 {
     class ChessPosition
     {

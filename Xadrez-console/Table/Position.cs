@@ -1,4 +1,4 @@
-﻿using ChessGame;
+﻿using Chess;
 namespace TableNS
 {
     class Position

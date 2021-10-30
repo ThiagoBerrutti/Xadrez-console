@@ -1,4 +1,6 @@
 ﻿using TableNS.Exceptions;
+using Chess;
+using System;
 namespace TableNS
 {
     class Table
@@ -36,6 +38,24 @@ namespace TableNS
             }
             Pieces[pos.Line, pos.Column] = piece;
             piece.Position = pos;
+        }
+
+        public void InsertPiece(Piece piece, ChessPosition pos)
+        {
+            InsertPiece(piece, pos.ToPosition());
+        }
+
+        public Piece RemovePiece(Position pos)
+        {
+            if (!HasPiece(pos))
+            {
+                return null;
+            };
+
+            Piece removedPiece = GetPiece(pos);
+            removedPiece.Position = null;
+            Pieces[pos.Line, pos.Column] = null;
+            return removedPiece;
         }
 
         public bool HasPiece(Position pos)
