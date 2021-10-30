@@ -45,8 +45,22 @@ namespace Xadrez_console
 
             try
             {
-                
-                SetTablePieces();
+                ChessPosition chess = new ChessPosition('a', 1);
+                Position pos = new Position(7, 0);
+
+                Position chessToPosition = new Position(chess);
+                ChessPosition positionToChess = new ChessPosition(pos);
+
+                //Console.WriteLine(chess.ToPosition());
+                //Console.WriteLine(pos.ToChessPosition());
+                Console.WriteLine("----------  ");
+                Console.WriteLine("chessToPosition: "+chessToPosition);
+                Console.WriteLine("positionToChess: "+positionToChess);
+
+
+
+                //SetTablePieces();
+                //table.InsertPiece(new Rook(table, color), new Position(initialLine, 0));
                 Display.PrintTable(table);
             }
             catch (TableException e)

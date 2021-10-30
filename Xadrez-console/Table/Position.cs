@@ -1,4 +1,5 @@
-﻿namespace TableNS
+﻿using ChessGame;
+namespace TableNS
 {
     class Position
     {
@@ -13,6 +14,18 @@
         {
             Line = line;
             Column = column;
+        }
+
+        public Position(ChessPosition chessPosition)
+        {
+            Position position = chessPosition.ToPosition();
+            Line = position.Line;
+            Column = position.Column;
+        }
+
+        public ChessPosition ToChessPosition()
+        {
+            return new ChessPosition((char)(Line + 'a'), 8 - Column);
         }
 
         public override string ToString()

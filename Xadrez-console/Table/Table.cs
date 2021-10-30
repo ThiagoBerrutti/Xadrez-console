@@ -3,15 +3,19 @@ namespace TableNS
 {
     class Table
     {
-        public int Lines { get; set; }
-        public int Columns { get; set; }
+        public int Lines { get; private set; } 
+        public int Columns { get; private set; }
         private Piece[,] Pieces;
 
-        public Table(int lines, int columns)
+        public Table(int columns, int lines)
         {
-            Lines = lines;
-            Columns = columns;
-            Pieces = new Piece[lines, columns];
+            Lines = lines; // pensando --> Lines é o total de linhas (ou seja, quantos indices por coluna)
+            Columns = columns; //Columns é o total de colunas (ou seja, quantos indices por linha)
+            Pieces = new Piece[Lines, Columns]; //uma matriz 3x4 (x=3,y=4) tem 3 indices no x, e 4 indices no y.
+                                                //Considerando a sintaxe Table.Pieces[nro. de indices X, nro de indices Y], 
+                                                //pra construir a matriz, o nro de indices no eixo X é igual ao numero de colunas...
+                                                //e o numero de indices no eixo Y é igual ao numero de linhas existentes
+                                                // --> na verdade, é Lines = TAMANHO DA LINHA e Columns = TAMANHO DA COLUNA.
         }
 
         public Piece GetPiece(int line, int column)
