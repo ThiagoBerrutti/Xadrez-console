@@ -14,6 +14,7 @@ namespace Xadrez_console
         {
             for (int x = 0; x < table.Lines; x++)
             {
+                Console.Write(8-x + " ");
                 for (int y = 0; y < table.Columns; y++)
                 {
                     Piece piece = table.GetPiece(x, y);
@@ -23,13 +24,22 @@ namespace Xadrez_console
                         Console.Write("- ");
                     }
                     else
-                    {   
-                        Console.ForegroundColor = (ConsoleColor)piece.Color; ;
-                        Console.Write($"{table.GetPiece(x, y)} ");
+                    {
+                        PrintPiece(table.GetPiece(x,y));
+                        Console.Write(" ");
                     }
                 }
                 Console.WriteLine();
             }
+            Console.WriteLine("  a b c d e f g h");
+        }
+
+        public static void PrintPiece(Piece piece)
+        {
+            ConsoleColor oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = (ConsoleColor)piece.Color; ;
+            Console.Write(piece);
+            Console.ForegroundColor = oldColor;
         }
     }
 }
