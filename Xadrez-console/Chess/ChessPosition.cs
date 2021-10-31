@@ -7,10 +7,10 @@ namespace Chess
 {
     class ChessPosition
     {
-        public int Line { get; set; }
-        public char Column { get; set; }
+        public char Line { get; set; }
+        public int Column { get; set; }
 
-        public ChessPosition(char column, int line)
+        public ChessPosition(char line, int column)
         {
             Column = column;
             Line = line;
@@ -18,19 +18,19 @@ namespace Chess
 
         public ChessPosition(Position pos)
         {
-            Column = (char)(pos.Column + 'a');
-            Line = 8 - pos.Line;
+            Line = (char)(pos.Column + 'a');
+            Column = 8 - pos.Line;
         }
 
         public Position ToPosition()
         {
-            return new Position(8 - Line, Column - 'a');
+            return new Position(Line - 'a', 8 - Column);
         }
 
 
         public override string ToString()
         {
-            return "" + Column + Line;
+            return "" + Line + Column;
         }
 
 

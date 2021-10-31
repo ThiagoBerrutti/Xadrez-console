@@ -2,7 +2,7 @@
 
 namespace TableNS
 {
-    class Piece
+    abstract class Piece
     {
         public Position Position { get; set; }
         public Color Color { get; protected set; }
@@ -24,5 +24,7 @@ namespace TableNS
         {
             MovementsQuantity++;
         }
+
+        //public abstract bool[,] PossibleMovements();
     }
 }

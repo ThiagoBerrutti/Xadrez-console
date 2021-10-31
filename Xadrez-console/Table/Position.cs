@@ -23,6 +23,12 @@ namespace TableNS
             Column = position.Column;
         }
 
+        public void SetValues(int line, int column)
+        {
+            Line = line;
+            Column = column;
+        }
+
         public ChessPosition ToChessPosition()
         {
             return new ChessPosition((char)(Line + 'a'), 8 - Column);

@@ -15,14 +15,33 @@ namespace Xadrez_console
         {
             
 
-            
-
-                
-            
-
+          
             try
             {
                 ChessMatch game = new ChessMatch();
+                Rook newKing = new Rook(game.table, Color.White);
+                game.table.InsertPiece(newKing, new Position(5, 3));
+                game.table.InsertPiece(new Rook(game.table, Color.White), new Position(0, 4));
+                game.table.InsertPiece(new Rook(game.table, Color.White), new Position(4, 5));
+                game.table.InsertPiece(new Rook(game.table, Color.Black), new ChessPosition('c', 4));              
+                game.table.InsertPiece(new Rook(game.table, Color.Black), new Position(5, 4));                 
+                game.table.InsertPiece(new Rook(game.table, Color.Black), new Position(5, 2));                 
+                game.table.InsertPiece(new Rook(game.table, Color.Black), new Position(4, 3));                 
+                game.table.InsertPiece(new Rook(game.table, Color.Black), new Position(6, 3));                 
+                //game.table.InsertPiece(new Rook(game.table, Color.Black), new ChessPosition('h', 4));
+                bool[,] possibleMovements = newKing.PossibleMovements();
+                
+
+                Console.Clear();
+                Display.PrintMoveablePositions(newKing);
+
+                //Console.WriteLine(newKing.PossibleMovements()[5,5]);
+                Console.WriteLine(new Position(5,5).ToChessPosition());
+                               
+                Console.WriteLine("King's position: "+ newKing.Position);
+                Console.WriteLine("King's position: "+ newKing.Position.ToChessPosition());
+                Console.ReadLine();
+
                 while (!game.Finished)
                 {
                     Console.Clear();
@@ -35,23 +54,6 @@ namespace Xadrez_console
                 }
                 
                 Display.PrintTable(game.table);
-                //ChessPosition chess = new ChessPosition('a', 1);
-                //Position pos = new Position(7, 0);
-
-                //Position chessToPosition = new Position(chess);
-                //ChessPosition positionToChess = new ChessPosition(pos);
-
-                ////Console.WriteLine(chess.ToPosition());
-                ////Console.WriteLine(pos.ToChessPosition());
-                //Console.WriteLine("----------  ");
-                //Console.WriteLine("chessToPosition: "+chessToPosition);
-                //Console.WriteLine("positionToChess: "+positionToChess);
-
-
-
-                
-                //table.InsertPiece(new Rook(table, color), new Position(initialLine, 0));
-                
             }
             catch (TableException e)
             {
