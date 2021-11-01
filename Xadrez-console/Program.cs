@@ -4,6 +4,7 @@ using Chess.Pieces;
 using TableNS.Enums;
 using Chess;
 using TableNS.Exceptions;
+using System.Collections.Generic;
 
 
 
@@ -16,8 +17,9 @@ namespace Xadrez_console
             try
             {
                 ChessMatch game = new ChessMatch();
-                Rook newKing = new Rook(game.Table, Color.White);
-                game.Table.InsertPiece(newKing, new Position(5, 3));
+                
+                game.Table.InsertPiece(new Rook(game.Table, Color.White), new Position(5, 3));
+                //game.Table.InsertPiece(new Knight(game.Table, Color.White), new Position(5, 3));
 
                 //bool[,] possiblePositions = ((Rook)game.Table.GetPiece(originChessPosition)).PossibleMovements();
                 while (!game.Finished)
@@ -27,9 +29,9 @@ namespace Xadrez_console
                     bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
 
                     Console.Clear();
-                    Display.PrintTableAndTurn(game);
+                    Display.PrintGame(game);
                     Console.WriteLine();
-
+                                        
                     try
                     {
                         Console.Write("Enter the origin position: ");
@@ -37,7 +39,6 @@ namespace Xadrez_console
 
                         game.ValidateOriginPosition(originPosition);
                     }
-
                     catch (TableException e)
                     {
                         Console.WriteLine();
@@ -49,7 +50,7 @@ namespace Xadrez_console
 
                     Console.Clear();
                     possibleMovements = game.Table.GetPiece(originPosition).PossibleMovements();
-                    Display.PrintTableAndTurn(game, possibleMovements);
+                    Display.PrintGame(game, possibleMovements);
                     Console.WriteLine();
 
                     Console.WriteLine("pass read");
@@ -68,8 +69,10 @@ namespace Xadrez_console
                         Console.WriteLine(e.Message);
                         Console.WriteLine("(Press any key to continue)");
                         Console.ReadKey();
-                        continue;
+                        //continue;
                     }
+
+                    Console.WriteLine("pass destiny");
 
                     game.ExecutePlay(originPosition, destinyPosition);
                 }

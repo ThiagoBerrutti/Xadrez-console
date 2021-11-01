@@ -12,21 +12,27 @@ namespace Chess
         public int Turn { get; private set; }
         public Color ActualPlayer { get; private set; }
         public bool Finished { get; set; }
-        public List<Piece> BlackPieces { get; protected set; }
-        public List<Piece> WhitePieces { get; protected set; }
 
-        public List<Piece> CapturedBlackPieces { get; protected set; }
-        public List<Piece> CapturedWhitePieces { get; protected set; }
+        public HashSet<Piece> Pieces { get; private set; }
+        public HashSet<Piece> CapturedPieces { get; private set; }
+
+        public HashSet<Piece> BlackPieces { get; protected set; }
+        public HashSet<Piece> WhitePieces { get; protected set; }
+
+        public HashSet<Piece> CapturedBlackPieces { get; protected set; }
+        public HashSet<Piece> CapturedWhitePieces { get; protected set; }
 
         public ChessMatch()
         {
             Table = new Table(8, 8);
             Turn = 1;
             ActualPlayer = Color.White;
-            BlackPieces = new List<Piece>();
-            WhitePieces = new List<Piece>();
-            CapturedBlackPieces = new List<Piece>();
-            CapturedWhitePieces = new List<Piece>();
+            BlackPieces = new HashSet<Piece>();
+            WhitePieces = new HashSet<Piece>();
+            CapturedPieces = new HashSet<Piece>();
+            Pieces = new HashSet<Piece>();
+            CapturedBlackPieces = new HashSet<Piece>();
+            CapturedWhitePieces = new HashSet<Piece>();
             SetTablePieces();
         }
 
@@ -48,25 +54,8 @@ namespace Chess
             Table.InsertPiece(piece, destiny);
         }
 
-        public void CapturePiece(Position pos)
-        {
-            Piece capturedPiece = Table.RemovePiece(pos);
-            if (capturedPiece != null)
-            {
-                if (capturedPiece.Color == Color.White)
-                {
-                    CapturedWhitePieces.Add(capturedPiece);
-                }
-                else if (capturedPiece.Color == Color.Black)
-                {
-                    CapturedBlackPieces.Add(capturedPiece);
-                }
-            }
-        }
-
         public void ExecutePlay(ChessPosition origin, ChessPosition destiny)
         {
-
             Move(origin, destiny);
             Turn++;
             ChangeActualPlayer();
@@ -74,10 +63,6 @@ namespace Chess
 
         public void ExecutePlay(Position origin, Position destiny)
         {
-            if (Table.GetPiece(destiny) != null)
-            {
-
-            }
             Move(origin, destiny);
             Turn++;
             ChangeActualPlayer();
@@ -95,19 +80,57 @@ namespace Chess
             }
         }
 
+        public HashSet<Piece> GetCapturedPiecesByColor(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+
+            foreach (Piece p in CapturedPieces)
+            {
+                if (p.Color == color)
+                {
+                    aux.Add(p);
+                }
+            }
+
+            return aux;
+        }
+
+        public HashSet<Piece> GetPiecesOnTable()
+        {
+            HashSet<Piece> onTable = Pieces;
+            onTable.ExceptWith(CapturedPieces);
+
+            return onTable;
+
+        }
+
+        public HashSet<Piece> GetPiecesOnTableByColor(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in aux)
+            {
+                if (p.Color == color)
+                {
+                    aux.Add(p);
+                }
+            }
+
+            return aux;
+        }
+
+        public void CapturePiece(Position pos)
+        {
+            Piece capturedPiece = Table.RemovePiece(pos);
+            if (capturedPiece != null)
+            {
+                CapturedPieces.Add(capturedPiece);
+            }
+        }
+
         private void SetPiece(Piece piece, Position pos)
         {
-            if (piece.Color == Color.Black)
-            {
-                BlackPieces.Add(piece);
-            }
-            else if (piece.Color == Color.White)
-            {
-                WhitePieces.Add(piece);
-            }
-
             Table.InsertPiece(piece, pos);
-
+            Pieces.Add(piece);
         }
 
         public void SetTablePieces()

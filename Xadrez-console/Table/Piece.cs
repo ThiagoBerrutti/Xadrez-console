@@ -46,5 +46,6 @@ namespace TableNS
         }
 
         public abstract bool[,] PossibleMovements();
+
     }
 }
