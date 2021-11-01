@@ -12,61 +12,59 @@ namespace Xadrez_console
 {
     class Display
     {
-        public static void PrintGame(ChessMatch game)
+        public static void PrintGame(ChessGame game)
         {
             PrintTable(game.Table);
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
-            PrintTurn(game);
             PrintCapturedPieces(game);
+            Console.WriteLine();
+            PrintTurn(game);
         }
 
-        public static void PrintGame(ChessMatch game, bool[,] possibleMovements)
+        public static void PrintGame(ChessGame game, bool[,] possibleMovements)
         {
             PrintTable(game.Table, possibleMovements);
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
-            PrintTurn(game);
             PrintCapturedPieces(game);
+            Console.WriteLine();
+            PrintTurn(game);
         }
 
-        public static void PrintCapturedPieces(ChessMatch game)
+        public static void PrintCapturedPieces(ChessGame game)
         {
-
             HashSet<Piece> capturedBlack = game.GetCapturedPiecesByColor(Color.Black);
             HashSet<Piece> capturedWhite = game.GetCapturedPiecesByColor(Color.White);
+
+            Console.WriteLine("Captured pieces:");
+
             ConsoleColor oldColor = Console.ForegroundColor;
 
-            if (capturedBlack.Count > 0)
+            Console.WriteLine();
+            Console.Write($"Black pieces captured: ");
+            PrintPieceCollection(capturedBlack, (ConsoleColor)Color.Black);
+
+            Console.WriteLine();
+            Console.Write($"White pieces captured: ");
+            PrintPieceCollection(capturedWhite, (ConsoleColor)Color.White);
+        }
+                
+        private static void PrintPieceCollection(HashSet<Piece> collection, ConsoleColor color)
+        {
+            Console.Write("[ ");
+            ConsoleColor oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+
+            foreach (Piece p in collection)
             {
-                Console.WriteLine();
-                Console.Write($"Black pieces captured: ");
-                Console.ForegroundColor = (ConsoleColor)Color.Black;
-
-                foreach (Piece p in capturedBlack)
-                {
-                    Console.Write(p + " ");
-                }
-
-                Console.ForegroundColor = oldColor;
-                Console.WriteLine();
+                Console.Write(p + " ");
             }
 
-            if (capturedWhite.Count > 0)
-            {
-                Console.WriteLine();
-                Console.Write($"White pieces captured: ");
-                oldColor = Console.ForegroundColor;
-                Console.ForegroundColor = (ConsoleColor)Color.White;
-
-                foreach (Piece p in capturedWhite)
-                {
-                    Console.Write(p + " ");
-                }
-                Console.ForegroundColor = oldColor;
-            }
+            Console.ForegroundColor = oldColor;
+            Console.Write("]");
         }
 
         public static void PrintTable(Table table)
@@ -83,7 +81,6 @@ namespace Xadrez_console
             }
             Console.WriteLine("  a b c d e f g h");
         }
-
         public static void PrintTable(Table table, bool[,] possibleMovements)
         {
             //bool[,] possibleMovements = king.PossibleMovements();
@@ -133,9 +130,7 @@ namespace Xadrez_console
             Console.ForegroundColor = oldColor;
         }
 
-
-
-        public static void PrintTurn(ChessMatch chessMatch)
+        public static void PrintTurn(ChessGame chessMatch)
         {
             Console.WriteLine($"Turn: {chessMatch.Turn}");
             Console.Write($"Now playing: ");
@@ -143,20 +138,6 @@ namespace Xadrez_console
             Console.ForegroundColor = (ConsoleColor)chessMatch.ActualPlayer;
             Console.WriteLine(chessMatch.ActualPlayer);
             Console.ForegroundColor = oldColor;
-        }
-
-        public static void PrintTableAndTurn(ChessMatch chessMatch)
-        {
-            PrintTable(chessMatch.Table);
-            Console.WriteLine();
-            PrintTurn(chessMatch);
-        }
-
-        public static void PrintTableAndTurn(ChessMatch chessMatch, bool[,] possibleMovements)
-        {
-            PrintTable(chessMatch.Table, possibleMovements);
-            Console.WriteLine();
-            PrintTurn(chessMatch);
         }
 
         public static ChessPosition ReadChessPosition()
@@ -178,7 +159,7 @@ namespace Xadrez_console
             }
 
             string s = Console.ReadLine();
-            s.Trim();
+            s = s.Trim();
 
             if (s.Length != 2)
             {

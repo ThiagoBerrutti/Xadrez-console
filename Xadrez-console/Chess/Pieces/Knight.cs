@@ -11,7 +11,7 @@ namespace Chess.Pieces
 
         private bool CanMove(Position pos)
         {
-            if (!Table.ValidPosition(pos)) return false;
+            if (!Table.IsPositionValid(pos)) return false;
             Piece p = Table.GetPiece(pos);
 
             return p == null || p.Color != Color;

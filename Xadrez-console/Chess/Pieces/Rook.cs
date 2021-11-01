@@ -12,7 +12,7 @@ namespace Chess.Pieces
 
         public bool CanMove(Position pos)
         {
-            if (!Table.ValidPosition(pos)) return false;
+            if (!Table.IsPositionValid(pos)) return false;
             //System.Console.WriteLine("Pos: "+ pos);
             Piece p = Table.GetPiece(pos);
 

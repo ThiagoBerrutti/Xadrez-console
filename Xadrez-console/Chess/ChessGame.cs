@@ -6,7 +6,7 @@ using TableNS.Exceptions;
 
 namespace Chess
 {
-    class ChessMatch
+    class ChessGame
     {
         public Table Table { get; private set; }
         public int Turn { get; private set; }
@@ -16,58 +16,18 @@ namespace Chess
         public HashSet<Piece> Pieces { get; private set; }
         public HashSet<Piece> CapturedPieces { get; private set; }
 
-        public HashSet<Piece> BlackPieces { get; protected set; }
-        public HashSet<Piece> WhitePieces { get; protected set; }
-
-        public HashSet<Piece> CapturedBlackPieces { get; protected set; }
-        public HashSet<Piece> CapturedWhitePieces { get; protected set; }
-
-        public ChessMatch()
+        public ChessGame()
         {
             Table = new Table(8, 8);
             Turn = 1;
             ActualPlayer = Color.White;
-            BlackPieces = new HashSet<Piece>();
-            WhitePieces = new HashSet<Piece>();
+           
             CapturedPieces = new HashSet<Piece>();
             Pieces = new HashSet<Piece>();
-            CapturedBlackPieces = new HashSet<Piece>();
-            CapturedWhitePieces = new HashSet<Piece>();
+            
             SetTablePieces();
         }
-
-
-
-        public void Move(ChessPosition origin, ChessPosition destiny)
-        {
-            Piece piece = Table.RemovePiece(origin.ToPosition());
-            piece.IncreaseMovementsQuantity();
-            Piece capturedPiece = Table.RemovePiece(origin.ToPosition());
-            Table.InsertPiece(piece, destiny);
-        }
-
-        public void Move(Position origin, Position destiny)
-        {
-            Piece piece = Table.RemovePiece(origin);
-            piece.IncreaseMovementsQuantity();
-            CapturePiece(destiny);
-            Table.InsertPiece(piece, destiny);
-        }
-
-        public void ExecutePlay(ChessPosition origin, ChessPosition destiny)
-        {
-            Move(origin, destiny);
-            Turn++;
-            ChangeActualPlayer();
-        }
-
-        public void ExecutePlay(Position origin, Position destiny)
-        {
-            Move(origin, destiny);
-            Turn++;
-            ChangeActualPlayer();
-        }
-
+        
         private void ChangeActualPlayer()
         {
             if (ActualPlayer == Color.White)
@@ -94,7 +54,6 @@ namespace Chess
 
             return aux;
         }
-
         public HashSet<Piece> GetPiecesOnTable()
         {
             HashSet<Piece> onTable = Pieces;
@@ -103,7 +62,6 @@ namespace Chess
             return onTable;
 
         }
-
         public HashSet<Piece> GetPiecesOnTableByColor(Color color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
@@ -118,6 +76,20 @@ namespace Chess
             return aux;
         }
 
+        public void Move(Position origin, Position destiny)
+        {
+            Piece piece = Table.RemovePiece(origin);
+            piece.IncreaseMovementsQuantity();
+            CapturePiece(destiny);
+            Table.InsertPiece(piece, destiny);
+        }
+        public void ExecutePlay(Position origin, Position destiny)
+        {
+            Move(origin, destiny);
+            Turn++;
+            ChangeActualPlayer();
+        }
+
         public void CapturePiece(Position pos)
         {
             Piece capturedPiece = Table.RemovePiece(pos);
@@ -126,13 +98,11 @@ namespace Chess
                 CapturedPieces.Add(capturedPiece);
             }
         }
-
         private void SetPiece(Piece piece, Position pos)
         {
             Table.InsertPiece(piece, pos);
             Pieces.Add(piece);
         }
-
         public void SetTablePieces()
         {
             void SetPlayerPieces(int initialLine, Color color)
@@ -180,7 +150,6 @@ namespace Chess
                 throw new TableException("Selected piece has no possible movements.");
             }
         }
-
         public void ValidateDestinyPosition(Position origin, Position destiny)
         {
             Piece originPiece = Table.GetPiece(origin);

@@ -27,9 +27,6 @@ namespace Chess
             return new Position(Line - 'a', 8 - Column);
         }
 
-
-
-
         public override string ToString()
         {
             return "" + Line + Column;

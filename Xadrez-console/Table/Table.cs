@@ -11,25 +11,19 @@ namespace TableNS
 
         public Table(int columns, int lines)
         {
-            Lines = lines; // pensando --> Lines é o total de linhas (ou seja, quantos indices por coluna)
-            Columns = columns; //Columns é o total de colunas (ou seja, quantos indices por linha)
-            Pieces = new Piece[Lines, Columns]; //uma matriz 3x4 (x=3,y=4) tem 3 indices no x, e 4 indices no y.
-                                                //Considerando a sintaxe Table.Pieces[nro. de indices X, nro de indices Y], 
-                                                //pra construir a matriz, o nro de indices no eixo X é igual ao numero de colunas...
-                                                //e o numero de indices no eixo Y é igual ao numero de linhas existentes
-                                                // --> na verdade, é Lines = TAMANHO DA LINHA e Columns = TAMANHO DA COLUNA.
+            Lines = lines; 
+            Columns = columns; 
+            Pieces = new Piece[Lines, Columns]; 
         }
 
         public Piece GetPiece(int line, int column)
         {
             return Pieces[line, column];
         }
-
         public Piece GetPiece(Position pos)
         {
             return Pieces[pos.Line, pos.Column];
         }
-
         public Piece GetPiece(ChessPosition chessPos)
         {
             Position pos = chessPos.ToPosition();
@@ -45,7 +39,6 @@ namespace TableNS
             Pieces[pos.Line, pos.Column] = piece;
             piece.Position = pos;
         }
-
         public void InsertPiece(Piece piece, ChessPosition pos)
         {
             InsertPiece(piece, pos.ToPosition());
@@ -69,15 +62,13 @@ namespace TableNS
             ValidatePosition(pos);
             return GetPiece(pos) != null;
         }
-
-        public bool ValidPosition(Position pos)
+        public bool IsPositionValid(Position pos)
         {
             return !(pos.Line < 0 || pos.Line >= Lines || pos.Column < 0 || pos.Column >= Columns);            
         }
-
         public void ValidatePosition(Position pos)
         {
-            if (!ValidPosition(pos))
+            if (!IsPositionValid(pos))
             {
                 throw new TableException("Error: invalid table position");
             }
