@@ -18,6 +18,9 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
+            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer, false)}");
+            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");
+            Console.WriteLine($"IsOnCheck iterations: {game.Cont}");
             PrintCapturedPieces(game);
             Console.WriteLine();
             PrintTurn(game);
@@ -29,10 +32,28 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
+            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer,false)}");
+            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");
+            Console.WriteLine($"IsOnCheck iterations: {game.Cont}");
             PrintCapturedPieces(game);
             Console.WriteLine();
             PrintTurn(game);
         }
+
+        //public static void PrintAllPossibleMovements(ChessGame game, Color color)
+        //{
+        //    bool[,] AllPossibleMovements = new bool[8, 8];
+
+        //    foreach(Piece p in game.GetPiecesOnTableByDifferentColor(color))
+        //    {
+        //        foreach (Position pos in p.PossibleMovementsList())
+        //        {
+        //            AllPossibleMovements[pos.Line, pos.Column] = true;
+        //        }                
+        //    }
+
+        //    PrintGame(game, AllPossibleMovements);
+        //}
 
         public static void PrintCapturedPieces(ChessGame game)
         {
@@ -50,9 +71,10 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.Write($"White pieces captured: ");
             PrintPieceCollection(capturedWhite, (ConsoleColor)Color.White);
+            Console.WriteLine();
         }
                 
-        private static void PrintPieceCollection(HashSet<Piece> collection, ConsoleColor color)
+        public static void PrintPieceCollection(HashSet<Piece> collection, ConsoleColor color)
         {
             Console.Write("[ ");
             ConsoleColor oldColor = Console.ForegroundColor;

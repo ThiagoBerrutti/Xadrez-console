@@ -1,4 +1,5 @@
-﻿using TableNS;
+﻿using System.Collections.Generic;
+using TableNS;
 using TableNS.Enums;
 
 namespace Chess.Pieces

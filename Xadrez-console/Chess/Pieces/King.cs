@@ -1,6 +1,7 @@
 ﻿using TableNS;
 using TableNS.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace Chess.Pieces
 {
@@ -15,8 +16,8 @@ namespace Chess.Pieces
             if (!Table.IsPositionValid(pos)) return false;
             //System.Console.WriteLine("Pos: "+ pos);
             Piece p = Table.GetPiece(pos);
-            
-            return (p == null || p.Color != Color  );
+
+            return (p == null || p.Color != Color);
         }
 
         public override bool[,] PossibleMovements()
@@ -24,61 +25,52 @@ namespace Chess.Pieces
             bool[,] possibleMovements = new bool[Table.Lines, Table.Columns];
             Position pos = new Position();
 
-            Console.WriteLine("Actual position: "+Position.ToChessPosition() + ", " + pos);
-
             pos.SetValues(Position.Line - 1, Position.Column);//4
-            if (CanMove(pos)) {
-                possibleMovements[Position.Line - 1, Position.Column] = true;
-                Console.WriteLine("Possible position: "+pos.ToChessPosition() + ", " + pos);
+            if (CanMove(pos))
+            {
+                possibleMovements[Position.Line - 1, Position.Column] = true;            
             }
 
             pos.SetValues(Position.Line - 1, Position.Column - 1); //7
             if (CanMove(pos))
             {
-                possibleMovements[Position.Line - 1, Position.Column - 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
+                possibleMovements[Position.Line - 1, Position.Column - 1] = true;                
             }
 
             pos.SetValues(Position.Line, Position.Column - 1); //8
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line, Position.Column - 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
             }
-            
+
             pos.SetValues(Position.Line + 1, Position.Column - 1); //9
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line + 1, Position.Column - 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
             }
 
             pos.SetValues(Position.Line + 1, Position.Column); //6
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line + 1, Position.Column] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
             }
 
             pos.SetValues(Position.Line + 1, Position.Column + 1); //3
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line + 1, Position.Column + 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
             }
 
             pos.SetValues(Position.Line, Position.Column + 1); //2
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line, Position.Column + 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
             }
 
             pos.SetValues(Position.Line - 1, Position.Column + 1); //1
             if (CanMove(pos))
             {
                 possibleMovements[Position.Line - 1, Position.Column + 1] = true;
-                Console.WriteLine("Possible position: " + pos.ToChessPosition()+", "+pos);
             }
 
             return possibleMovements;

@@ -5,6 +5,7 @@ using TableNS.Enums;
 using Chess;
 using TableNS.Exceptions;
 using System.Collections.Generic;
+using Chess.Exceptions;
 
 
 
@@ -19,8 +20,15 @@ namespace Xadrez_console
                 ChessGame game = new ChessGame();
                 Position originPosition;
                 Position destinyPosition;
-                game.Table.InsertPiece(new Rook(game.Table, Color.White), new Position(5, 3));
-                game.CapturePiece(new Position(0, 0));
+                //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 3));
+                //game.SetPiece(new Rook(game.Table, Color.White), new Position(4, 3));
+                game.SetPiece(new Rook(game.Table, Color.Black), new Position(3, 3));
+                //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 5));
+                //game.SetPiece(new Rook(game.Table, Color.White), new Position(3, 5));
+                game.SetPiece(new King(game.Table, Color.Black), new Position(4, 4));                
+                game.SetPiece(new King(game.Table, Color.White), new Position(0, 3));                
+            
+                //game.CapturePiece(new Position(0, 0));
                 //game.CapturePiece(new Position(1, 0));
                 //game.CapturePiece(new Position(2, 0));
                 //game.CapturePiece(new Position(3, 0));
@@ -108,7 +116,18 @@ namespace Xadrez_console
 
                     destinyPosition = ReadDestinyPosition(game, possibleMovements);
 
-                    game.ExecutePlay(originPosition, destinyPosition);
+                    try
+                    {
+                        game.ExecutePlay(originPosition, destinyPosition);
+                    }
+                    catch (CheckException e)
+                    {
+                        ConsoleColor oldColor = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(e.Message);
+                        Console.ForegroundColor = oldColor;
+                        Console.ReadKey();
+                    }
                 }
             }
             catch (TableException e)

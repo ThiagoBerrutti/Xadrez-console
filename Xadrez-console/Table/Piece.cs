@@ -1,4 +1,5 @@
 ﻿using TableNS.Enums;
+using System.Collections.Generic;
 
 namespace TableNS
 {
@@ -43,6 +44,25 @@ namespace TableNS
         public bool CanMoveTo(Position pos)
         {
             return PossibleMovements()[pos.Line, pos.Column];
+        }
+
+        public List<Position> PossibleMovementsList()
+        {
+            List<Position> possibleMovementsList = new List<Position>();
+            bool[,] possibleMovements = PossibleMovements();
+
+
+            for (int y = 0; y < possibleMovements.GetLength(1); y++)
+            {
+                for (int x = 0; x < possibleMovements.GetLength(0); x++)
+                {
+                    if (possibleMovements[x, y])
+                    {
+                        possibleMovementsList.Add(new Position(x, y));
+                    }
+                }
+            }
+            return possibleMovementsList;
         }
 
         public abstract bool[,] PossibleMovements();
