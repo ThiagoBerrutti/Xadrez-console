@@ -19,7 +19,7 @@ namespace Chess.Pieces
             return (p == null || p.Color != Color  );
         }
 
-        public bool[,] PossibleMovements()
+        public override bool[,] PossibleMovements()
         {
             bool[,] possibleMovements = new bool[Table.Lines, Table.Columns];
             Position pos = new Position();

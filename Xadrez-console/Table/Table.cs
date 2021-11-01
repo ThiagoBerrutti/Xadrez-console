@@ -30,6 +30,12 @@ namespace TableNS
             return Pieces[pos.Line, pos.Column];
         }
 
+        public Piece GetPiece(ChessPosition chessPos)
+        {
+            Position pos = chessPos.ToPosition();
+            return Pieces[pos.Line, pos.Column];
+        }
+
         public void InsertPiece(Piece piece, Position pos)
         {
             if (HasPiece(pos))

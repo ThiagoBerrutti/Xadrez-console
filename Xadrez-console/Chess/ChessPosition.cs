@@ -28,6 +28,8 @@ namespace Chess
         }
 
 
+
+
         public override string ToString()
         {
             return "" + Line + Column;

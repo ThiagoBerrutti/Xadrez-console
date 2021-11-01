@@ -9,6 +9,11 @@ namespace Chess.Pieces
         {
         }
 
+        public override bool[,] PossibleMovements()
+        {
+            return new bool[8, 8];
+        }
+
         public override string ToString()
         {
             return "B";

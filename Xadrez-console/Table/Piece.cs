@@ -25,6 +25,26 @@ namespace TableNS
             MovementsQuantity++;
         }
 
-        //public abstract bool[,] PossibleMovements();
+        public bool HasPossibleMovements()
+        {
+            bool[,] possibleMovements = PossibleMovements();
+
+            for (int x = 0; x < Table.Lines; x++)
+            {
+                for (int y = 0; y < Table.Columns; y++)
+                {
+                    if (possibleMovements[x, y]) return true;
+                }
+            }
+
+            return false;
+        }        
+
+        public bool CanMoveTo(Position pos)
+        {
+            return PossibleMovements()[pos.Line, pos.Column];
+        }
+
+        public abstract bool[,] PossibleMovements();
     }
 }
