@@ -12,30 +12,26 @@ namespace Xadrez_console
 {
     class Display
     {
-        public static void PrintGame(ChessGame game)
+        public static void PrintGame(ChessGame chessGame)
         {
-            PrintTable(game.Table);
+            PrintTable(chessGame.Table);
             Console.WriteLine();
             Console.WriteLine("==============================");
+            Console.WriteLine();                
+            PrintCapturedPieces(chessGame);
             Console.WriteLine();
-            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer)}");
-            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");            
-            PrintCapturedPieces(game);
-            Console.WriteLine();
-            PrintTurn(game);
+            PrintTurn(chessGame);
         }
 
-        public static void PrintGame(ChessGame game, bool[,] possibleMovements)
+        public static void PrintGame(ChessGame chessGame, bool[,] possibleMovements)
         {
-            PrintTable(game.Table, possibleMovements);
+            PrintTable(chessGame.Table, possibleMovements);
             Console.WriteLine();
             Console.WriteLine("==============================");
+            Console.WriteLine();            
+            PrintCapturedPieces(chessGame);
             Console.WriteLine();
-            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer)}");
-            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");            
-            PrintCapturedPieces(game);
-            Console.WriteLine();
-            PrintTurn(game);
+            PrintTurn(chessGame);
         }
 
         //public static void PrintAllPossibleMovements(ChessGame game, Color color)
@@ -53,10 +49,10 @@ namespace Xadrez_console
         //    PrintGame(game, AllPossibleMovements);
         //}
 
-        public static void PrintCapturedPieces(ChessGame game)
+        public static void PrintCapturedPieces(ChessGame chessGame)
         {
-            HashSet<Piece> capturedBlack = game.GetCapturedPiecesByColor(Color.Black);
-            HashSet<Piece> capturedWhite = game.GetCapturedPiecesByColor(Color.White);
+            HashSet<Piece> capturedBlack = chessGame.GetCapturedPiecesByColor(Color.Black);
+            HashSet<Piece> capturedWhite = chessGame.GetCapturedPiecesByColor(Color.White);
 
             Console.WriteLine("Captured pieces:");
 
@@ -150,14 +146,25 @@ namespace Xadrez_console
             Console.ForegroundColor = oldColor;
         }
 
-        public static void PrintTurn(ChessGame chessMatch)
+        public static void PrintTurn(ChessGame chessGame)
         {
-            Console.WriteLine($"Turn: {chessMatch.Turn}");
+            Console.WriteLine($"Turn: {chessGame.Turn}");
             Console.Write($"Now playing: ");
             ConsoleColor oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = (ConsoleColor)chessMatch.ActualPlayer;
-            Console.WriteLine(chessMatch.ActualPlayer);
-            Console.ForegroundColor = oldColor;
+            Console.ForegroundColor = (ConsoleColor)chessGame.ActualPlayer;
+            Console.WriteLine(chessGame.ActualPlayer);
+            Console.ForegroundColor = oldColor;            
+        }
+
+        public static void PrintCheck(ChessGame chessGame)
+        {
+            if (chessGame.Check)
+            {
+                ConsoleColor oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("CHECK!");
+                Console.ForegroundColor = oldColor;
+            }
         }
 
         public static ChessPosition ReadChessPosition()

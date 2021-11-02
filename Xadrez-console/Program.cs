@@ -77,15 +77,14 @@ namespace Xadrez_console
                         originPosition = new Position();
                         destinyPosition = new Position();
                         bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
+                        game.UpdateCheckStatus();
 
                         Console.Clear();
                         Display.PrintGame(game);
                         Console.WriteLine();
 
                         originPosition = ReadOriginPosition(game);
-
                         possibleMovements = game.Table.GetPiece(originPosition).PossibleMovements();
-
                         destinyPosition = ReadDestinyPosition(game, possibleMovements);
 
                         try

@@ -14,7 +14,9 @@ namespace Chess
         public Table Table { get; private set; }
         public int Turn { get; private set; }
         public Color ActualPlayer { get; private set; }
-        public bool Finished { get; set; }  
+        public bool Finished { get; set; }
+        public bool Check { get; set; }
+
 
         public HashSet<Piece> Pieces { get; private set; }
         public HashSet<Piece> CapturedPieces { get; private set; }
@@ -26,7 +28,7 @@ namespace Chess
             ActualPlayer = Color.White;
             CapturedPieces = new HashSet<Piece>();
             Pieces = new HashSet<Piece>();
-
+            Check = false;
             SetTablePieces();
         }
 
@@ -103,62 +105,39 @@ namespace Chess
             if (piece != null)
             {
                 piece.IncreaseMovementsQuantity();
-            Table.InsertPiece(piece, destiny);
+                Table.InsertPiece(piece, destiny);
             }
-
-
-            ValidateMoveNotOnCheck(origin, destiny, capturedPiece);
+           
             AddToCapturedPieces(capturedPiece);
 
             return capturedPiece;
         }
 
-        private void ValidateMoveNotOnCheck(Position origin, Position destiny, Piece capturedPiece)
-        {
-            if (IsOnCheck(ActualPlayer))
-            {
-                UndoPlay(origin, destiny, capturedPiece);                
-                throw new CheckException("You can't end your turn at check!");
-            }
-        }
-
-        private void AddToCapturedPieces(Piece capturedPiece)
-        {
-            if (capturedPiece != null)
-            {
-                CapturedPieces.Add(capturedPiece);
-            }
-        }
 
         public void ExecutePlay(Position origin, Position destiny)
         {
-            //Piece capturedPiece = null;
+            Piece capturedPiece = Move(origin, destiny);
+            ValidateMoveNotOnCheck(origin, destiny, capturedPiece);
 
-            try
-            {
-                Move(origin, destiny);
+            if (IsOnCheck(Opponent(ActualPlayer))){
+                Check = true;
             }
-            catch (CheckException e)
+            else
             {
-                ConsoleColor oldColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-                Console.ForegroundColor = oldColor;
-                Console.ReadKey();
+                Check = false;
             }
 
             Turn++;
             ChangeActualPlayer();
-
         }
 
         private void UndoPlay(Position origin, Position destiny, Piece capturedPiece)
         {
-            //Move(destiny, origin);
-            Piece piece = Table.GetPiece(destiny);
+            Piece piece = Table.GetPiece(destiny);            
+
             if (piece != null)
             {
-                piece.Position = origin;
+                Move(destiny, origin);
                 piece.DecreaseMovementsQuantity();
 
                 if (capturedPiece != null)
@@ -167,18 +146,8 @@ namespace Chess
                     CapturedPieces.Remove(capturedPiece);
                 }
             }
-
         }
-
-        //public Piece CapturePiece(Position pos)
-        //{
-        //    Piece capturedPiece = Table.RemovePiece(pos);
-        //    if (capturedPiece != null)
-        //    {
-        //        CapturedPieces.Add(capturedPiece);
-        //    }
-        //    return capturedPiece;
-        //}
+        
         public void SetPiece(Piece piece, Position pos)
         {
             Table.InsertPiece(piece, pos);
@@ -213,6 +182,60 @@ namespace Chess
             SetPlayerPieces(7, Color.White);
         }
 
+        public bool IsOnCheck(Color color)
+        {
+            HashSet<Piece> enemyPieces = GetPiecesOnTableByDifferentColor(color);
+
+            foreach (Piece enemy in enemyPieces)
+            {
+                foreach (Position p in enemy.PossibleMovementsList())
+                {
+                    if (Table.GetPiece(p) is King)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        public bool IsOnCheckMate(Color color)
+        {
+            HashSet<Piece> allyPieces = GetPiecesOnTableByColor(color);
+
+            foreach (Piece piece in allyPieces)
+            {
+                foreach (Position possibleMovement in piece.PossibleMovementsList())
+                {
+                    Position piecePosition = piece.Position;
+                    Piece capturedPiece = null;
+                    try
+                    {                        
+                        capturedPiece = Move(piecePosition, possibleMovement);
+                        ValidateMoveNotOnCheck(piecePosition, possibleMovement, capturedPiece);
+                        
+                        //if pass the validation, it isn't on check anymore
+
+                        UndoPlay(piecePosition, possibleMovement, capturedPiece);
+                        return false;
+                    }
+                    catch (CheckException)
+                    {                       
+                        //ConsoleColor oldColor = Console.ForegroundColor;
+                        //Console.ForegroundColor = ConsoleColor.Red;
+                        //Console.WriteLine(e.Message);
+                        //Console.ForegroundColor = oldColor;
+                        //Console.ReadKey();
+                    }                    
+                }
+            }
+            return true;
+        }
+
+        public void UpdateCheckStatus()
+        {
+            Check = IsOnCheck(ActualPlayer);
+        }
         public void ValidateOriginPosition(Position pos)
         {
             Piece piece = Table.GetPiece(pos);
@@ -240,57 +263,31 @@ namespace Chess
                 throw new TableException("Cannot move to selected position.");
             }
         }
-
-        public bool IsOnCheck(Color color)
+        private void ValidateMoveNotOnCheck(Position origin, Position destiny, Piece capturedPiece)
         {
-            HashSet<Piece> enemyPieces = GetPiecesOnTableByDifferentColor(color);
-
-            foreach (Piece enemy in enemyPieces)
+            if (IsOnCheck(ActualPlayer))
             {
-                foreach (Position p in enemy.PossibleMovementsList())
-                {
-                    if (Table.GetPiece(p) is King)
-                    {
-                        return true;
-                    }
-                }
+                UndoPlay(origin, destiny, capturedPiece);
+                throw new CheckException("You can't end your turn at check!");
             }
-
-            return false;
         }
-
-        public bool IsOnCheckMate(Color color)
+        private void AddToCapturedPieces(Piece capturedPiece)
         {
-            HashSet<Piece> allyPieces = GetPiecesOnTableByColor(color);
-
-            foreach (Piece piece in allyPieces)
+            if (capturedPiece != null)
             {
-                foreach (Position possibleMovement in piece.PossibleMovementsList())
-                {
-                    Position piecePosition = piece.Position;
-                    Piece capturedPiece = null;
-                    
-                    try
-                    {
-                        capturedPiece = Move(piecePosition, possibleMovement);
-
-                    }
-                    catch (CheckException)
-                    {
-
-                    }
-
-                    if (!IsOnCheck(ActualPlayer))
-                    {
-                        UndoPlay(piecePosition, possibleMovement, capturedPiece);
-                        return false;
-                    }
-
-                    UndoPlay(piecePosition, possibleMovement, capturedPiece);
-                }
+                CapturedPieces.Add(capturedPiece);
             }
-
-            return false;
+        }
+        public Color Opponent(Color actualPlayer)
+        {
+            if (actualPlayer == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
         }
     }
 }
