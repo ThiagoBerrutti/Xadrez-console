@@ -23,11 +23,12 @@ namespace Xadrez_console
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 3));
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(4, 3));
                 game.SetPiece(new Rook(game.Table, Color.Black), new Position(3, 3));
+                
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 5));
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(3, 5));
-                game.SetPiece(new King(game.Table, Color.Black), new Position(4, 4));                
-                game.SetPiece(new King(game.Table, Color.White), new Position(0, 3));                
-            
+                game.SetPiece(new King(game.Table, Color.Black), new Position(4, 4));
+                game.SetPiece(new King(game.Table, Color.White), new Position(0, 3));
+
                 //game.CapturePiece(new Position(0, 0));
                 //game.CapturePiece(new Position(1, 0));
                 //game.CapturePiece(new Position(2, 0));
@@ -42,90 +43,69 @@ namespace Xadrez_console
                 Position ReadOriginPosition(ChessGame chessGame)
                 {
                     Position originPosition = new Position();
-                    bool finished = false;
 
-                    while (!finished)
-                    {                        
-                        try
-                        {
-                            Console.Write("Origin position: ");
-                            originPosition = Display.ReadChessPosition().ToPosition();
-                            chessGame.ValidateOriginPosition(originPosition);
-                            finished = true;
-                        }
-                        catch (TableException e)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine(e.Message);
-                            Console.WriteLine("(Press any key to continue)");
-                            Console.ReadKey();
-                            Console.Clear();
-                            Display.PrintGame(chessGame);
-                            Console.WriteLine();
-                        }
-                    }
+                    Console.Write("Origin position: ");
+                    originPosition = Display.ReadChessPosition().ToPosition();
+                    chessGame.ValidateOriginPosition(originPosition);
+
                     return originPosition;
                 }
 
                 Position ReadDestinyPosition(ChessGame chessGame, bool[,] possibleMovements)
                 {
                     Position destinyPosition = new Position();
-                    bool finished = false;
 
-                    while (!finished)
-                    {
-                        try
-                        {
-                            Console.Clear();
-                            Display.PrintGame(chessGame, possibleMovements);
-                            Console.WriteLine();
-                            Console.WriteLine($"Origin position: {originPosition.ToChessPosition()}");
-                            Console.Write("Destiny position: ");
-                            destinyPosition = Display.ReadChessPosition().ToPosition();
-                            chessGame.ValidateDestinyPosition(originPosition, destinyPosition);
-                            finished = true;
-                        }
-                        catch (TableException e)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine(e.Message);
-                            Console.WriteLine("(Press any key to continue)");
-                            Console.ReadKey();                                                     
-                        }
-                    }
+                    Console.Clear();
+                    Display.PrintGame(chessGame, possibleMovements);
+                    Console.WriteLine();
+                    Console.WriteLine($"Origin position: {originPosition.ToChessPosition()}");
+                    Console.Write("Destiny position: ");
+                    destinyPosition = Display.ReadChessPosition().ToPosition();
+                    chessGame.ValidateDestinyPosition(originPosition, destinyPosition);
+
                     return destinyPosition;
                 }
 
 
                 /////// START ///////
-                
+
 
                 while (!game.Finished)
                 {
-                    originPosition = new Position();
-                    destinyPosition = new Position();
-                    bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
-
-                    Console.Clear();
-                    Display.PrintGame(game);
-                    Console.WriteLine();
-
-                    originPosition = ReadOriginPosition(game);                    
-
-                    possibleMovements = game.Table.GetPiece(originPosition).PossibleMovements();                    
-
-                    destinyPosition = ReadDestinyPosition(game, possibleMovements);
-
                     try
                     {
-                        game.ExecutePlay(originPosition, destinyPosition);
+                        originPosition = new Position();
+                        destinyPosition = new Position();
+                        bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
+
+                        Console.Clear();
+                        Display.PrintGame(game);
+                        Console.WriteLine();
+
+                        originPosition = ReadOriginPosition(game);
+
+                        possibleMovements = game.Table.GetPiece(originPosition).PossibleMovements();
+
+                        destinyPosition = ReadDestinyPosition(game, possibleMovements);
+
+                        try
+                        {
+                            game.ExecutePlay(originPosition, destinyPosition);
+                        }
+                        catch (CheckException e)
+                        {
+                            ConsoleColor oldColor = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(e.Message);
+                            Console.ForegroundColor = oldColor;
+                            Console.ReadKey();
+                        }
                     }
-                    catch (CheckException e)
+                    catch (TableException e)
                     {
-                        ConsoleColor oldColor = Console.ForegroundColor;
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
                         Console.WriteLine(e.Message);
-                        Console.ForegroundColor = oldColor;
+                        Console.WriteLine("(Press any key to continue)");
                         Console.ReadKey();
                     }
                 }

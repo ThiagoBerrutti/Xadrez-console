@@ -18,9 +18,8 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
-            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer, false)}");
-            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");
-            Console.WriteLine($"IsOnCheck iterations: {game.Cont}");
+            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer)}");
+            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");            
             PrintCapturedPieces(game);
             Console.WriteLine();
             PrintTurn(game);
@@ -32,9 +31,8 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.WriteLine("==============================");
             Console.WriteLine();
-            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer,false)}");
-            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");
-            Console.WriteLine($"IsOnCheck iterations: {game.Cont}");
+            Console.WriteLine($"Check: {game.IsOnCheck(game.ActualPlayer)}");
+            Console.WriteLine($"CheckMate: {game.IsOnCheckMate(game.ActualPlayer)}");            
             PrintCapturedPieces(game);
             Console.WriteLine();
             PrintTurn(game);
@@ -44,12 +42,12 @@ namespace Xadrez_console
         //{
         //    bool[,] AllPossibleMovements = new bool[8, 8];
 
-        //    foreach(Piece p in game.GetPiecesOnTableByDifferentColor(color))
+        //    foreach (Piece p in game.GetPiecesOnTableByDifferentColor(color))
         //    {
         //        foreach (Position pos in p.PossibleMovementsList())
         //        {
         //            AllPossibleMovements[pos.Line, pos.Column] = true;
-        //        }                
+        //        }
         //    }
 
         //    PrintGame(game, AllPossibleMovements);

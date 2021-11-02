@@ -21,9 +21,26 @@ namespace TableNS
             Table = table;            
         }
 
+        public void DecreaseMovementsQuantity()
+        {
+            if (Exists())
+            {
+            MovementsQuantity--;
+            }
+        }
+
+        public bool Exists()
+        {
+            return this != null;
+        }
+
         public void IncreaseMovementsQuantity() 
         {
+            if (Exists())
+            {
             MovementsQuantity++;
+
+            }
         }
 
         public bool HasPossibleMovements()
