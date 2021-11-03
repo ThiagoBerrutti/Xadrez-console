@@ -22,7 +22,7 @@ namespace Xadrez_console
                 Position destinyPosition;
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 3));
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(4, 3));
-                game.SetPiece(new Rook(game.Table, Color.Black), new Position(3, 3));
+                game.SetPiece(new Queen(game.Table, Color.Black), new Position(3, 3));
                 
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 5));
                 //game.SetPiece(new Rook(game.Table, Color.White), new Position(3, 5));
@@ -70,14 +70,16 @@ namespace Xadrez_console
                 /////// START ///////
 
 
-                while (!game.Finished)
+                game.UpdateCheckProperty();
+
+                while (!game.GameFinished)
                 {
                     try
                     {
                         originPosition = new Position();
                         destinyPosition = new Position();
                         bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
-                        game.UpdateCheckStatus();
+                        //game.UpdateCheckProperty();
 
                         Console.Clear();
                         Display.PrintGame(game);

@@ -14,7 +14,7 @@ namespace Chess
         public Table Table { get; private set; }
         public int Turn { get; private set; }
         public Color ActualPlayer { get; private set; }
-        public bool Finished { get; set; }
+        public bool GameFinished { get; set; }
         public bool Check { get; set; }
 
 
@@ -60,7 +60,12 @@ namespace Chess
         }
         public HashSet<Piece> GetPiecesOnTable()
         {
-            HashSet<Piece> onTable = Pieces;
+            HashSet<Piece> onTable = new HashSet<Piece>();
+
+            foreach (Piece p in Pieces)
+            {
+                onTable.Add(p);
+            }
             onTable.ExceptWith(CapturedPieces);
 
             return onTable;
@@ -113,24 +118,29 @@ namespace Chess
             return capturedPiece;
         }
 
-
         public void ExecutePlay(Position origin, Position destiny)
         {
             Piece capturedPiece = Move(origin, destiny);
             ValidateMoveNotOnCheck(origin, destiny, capturedPiece);
-
             if (IsOnCheck(Opponent(ActualPlayer))){
+            
                 Check = true;
+                                    
+                if (IsOnCheckMate(Opponent(ActualPlayer)))
+                {
+                    
+                    GameFinished = true;
+                }
             }
             else
             {
                 Check = false;
-            }
+            }            
 
             Turn++;
             ChangeActualPlayer();
         }
-
+        
         private void UndoPlay(Position origin, Position destiny, Piece capturedPiece)
         {
             Piece piece = Table.GetPiece(destiny);            
@@ -185,7 +195,7 @@ namespace Chess
         public bool IsOnCheck(Color color)
         {
             HashSet<Piece> enemyPieces = GetPiecesOnTableByDifferentColor(color);
-
+            
             foreach (Piece enemy in enemyPieces)
             {
                 foreach (Position p in enemy.PossibleMovementsList())
@@ -200,7 +210,7 @@ namespace Chess
             return false;
         }
         public bool IsOnCheckMate(Color color)
-        {
+        {            
             HashSet<Piece> allyPieces = GetPiecesOnTableByColor(color);
 
             foreach (Piece piece in allyPieces)
@@ -210,7 +220,7 @@ namespace Chess
                     Position piecePosition = piece.Position;
                     Piece capturedPiece = null;
                     try
-                    {                        
+                    {
                         capturedPiece = Move(piecePosition, possibleMovement);
                         ValidateMoveNotOnCheck(piecePosition, possibleMovement, capturedPiece);
                         
@@ -220,19 +230,14 @@ namespace Chess
                         return false;
                     }
                     catch (CheckException)
-                    {                       
-                        //ConsoleColor oldColor = Console.ForegroundColor;
-                        //Console.ForegroundColor = ConsoleColor.Red;
-                        //Console.WriteLine(e.Message);
-                        //Console.ForegroundColor = oldColor;
-                        //Console.ReadKey();
+                    {   
                     }                    
                 }
             }
             return true;
         }
 
-        public void UpdateCheckStatus()
+        public void UpdateCheckProperty()
         {
             Check = IsOnCheck(ActualPlayer);
         }
@@ -258,7 +263,7 @@ namespace Chess
         {
             Piece originPiece = Table.GetPiece(origin);
 
-            if (!originPiece.CanMoveTo(destiny))
+            if (!originPiece.IsPossibleMovement(destiny))
             {
                 throw new TableException("Cannot move to selected position.");
             }

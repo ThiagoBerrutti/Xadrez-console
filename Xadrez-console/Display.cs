@@ -68,6 +68,8 @@ namespace Xadrez_console
             Console.WriteLine();
         }
                 
+        
+
         public static void PrintPieceCollection(HashSet<Piece> collection, ConsoleColor color)
         {
             Console.Write("[ ");
@@ -145,7 +147,6 @@ namespace Xadrez_console
             }
             Console.ForegroundColor = oldColor;
         }
-
         public static void PrintTurn(ChessGame chessGame)
         {
             Console.WriteLine($"Turn: {chessGame.Turn}");
@@ -153,9 +154,10 @@ namespace Xadrez_console
             ConsoleColor oldColor = Console.ForegroundColor;
             Console.ForegroundColor = (ConsoleColor)chessGame.ActualPlayer;
             Console.WriteLine(chessGame.ActualPlayer);
-            Console.ForegroundColor = oldColor;            
-        }
+            Console.ForegroundColor = oldColor;
 
+            PrintCheck(chessGame);
+        }
         public static void PrintCheck(ChessGame chessGame)
         {
             if (chessGame.Check)

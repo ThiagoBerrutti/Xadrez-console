@@ -15,34 +15,31 @@ namespace TableNS
             MovementsQuantity = 0;
         }
 
-        public Piece( Table table, Color color) : this()
+        public Piece(Table table, Color color) : this()
         {
             Color = color;
-            Table = table;            
+            Table = table;
         }
 
         public void DecreaseMovementsQuantity()
         {
-            if (Exists())
+            if (this != null)
             {
-            MovementsQuantity--;
+                MovementsQuantity--;
+            }
+        }
+        public void IncreaseMovementsQuantity()
+        {
+            if (this != null)
+            {
+                MovementsQuantity++;
             }
         }
 
-        public bool Exists()
+        public bool IsPossibleMovement(Position pos)
         {
-            return this != null;
+            return PossibleMovements()[pos.Line, pos.Column];
         }
-
-        public void IncreaseMovementsQuantity() 
-        {
-            if (Exists())
-            {
-            MovementsQuantity++;
-
-            }
-        }
-
         public bool HasPossibleMovements()
         {
             bool[,] possibleMovements = PossibleMovements();
@@ -56,12 +53,8 @@ namespace TableNS
             }
 
             return false;
-        }        
-
-        public bool CanMoveTo(Position pos)
-        {
-            return PossibleMovements()[pos.Line, pos.Column];
         }
+
 
         public List<Position> PossibleMovementsList()
         {
