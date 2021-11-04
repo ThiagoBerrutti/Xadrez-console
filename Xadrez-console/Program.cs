@@ -7,8 +7,6 @@ using TableNS.Exceptions;
 using System.Collections.Generic;
 using Chess.Exceptions;
 
-
-
 namespace Xadrez_console
 {
     class Program
@@ -19,26 +17,7 @@ namespace Xadrez_console
             {
                 ChessGame game = new ChessGame();
                 Position originPosition;
-                Position destinyPosition;
-                //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 3));
-                //game.SetPiece(new Rook(game.Table, Color.White), new Position(4, 3));
-                game.SetPiece(new Queen(game.Table, Color.Black), new Position(3, 3));
-                
-                //game.SetPiece(new Rook(game.Table, Color.White), new Position(5, 5));
-                //game.SetPiece(new Rook(game.Table, Color.White), new Position(3, 5));
-                game.SetPiece(new King(game.Table, Color.Black), new Position(4, 4));
-                game.SetPiece(new King(game.Table, Color.White), new Position(0, 3));
-
-                //game.CapturePiece(new Position(0, 0));
-                //game.CapturePiece(new Position(1, 0));
-                //game.CapturePiece(new Position(2, 0));
-                //game.CapturePiece(new Position(3, 0));
-
-                //game.CapturePiece(new Position(7, 7));
-                //game.CapturePiece(new Position(6, 7));
-                //game.CapturePiece(new Position(5, 6));
-                //game.CapturePiece(new Position(4, 6));
-
+                Position destinyPosition;                
 
                 Position ReadOriginPosition(ChessGame chessGame)
                 {
@@ -79,7 +58,38 @@ namespace Xadrez_console
                         originPosition = new Position();
                         destinyPosition = new Position();
                         bool[,] possibleMovements = new bool[game.Table.Lines, game.Table.Columns];
-                        //game.UpdateCheckProperty();
+
+                        
+                        //game.ExecutePlay(new Position(4, 7), new Position(2, 7));
+                        //Console.Clear();
+                        ////possibleMovements = game.Table.GetPiece(4, 7).PossibleMovements();
+                        //Display.PrintGame(game, possibleMovements);
+                        //Console.WriteLine("Castling white left");
+                        ////Console.WriteLine($"{game.Table.GetPiece(2,7)}");
+                        //Console.ReadKey();
+
+                        //game.UndoPlay(new Position(4, 7), new Position(2, 7), null);
+                        ////possibleMovements = game.Table.GetPiece(4, 7).PossibleMovements();
+                        //Console.Clear();
+                        //Display.PrintGame(game, possibleMovements);
+                        //Console.WriteLine("Undo");
+                        //Console.ReadKey();
+
+
+                        //game.ExecutePlay(new Position(4, 0), new Position(6, 0));
+                        ////possibleMovements = game.Table.GetPiece(4, 0).PossibleMovements();
+                        //Console.Clear();
+                        //Display.PrintGame(game, possibleMovements);
+                        //Console.WriteLine("Castling black right");
+                        //Console.ReadKey();
+
+                        
+                        //game.UndoPlay(new Position(4, 0), new Position(6, 0), null);
+                        ////possibleMovements = game.Table.GetPiece(4, 0).PossibleMovements();
+                        //Console.Clear();
+                        //Display.PrintGame(game, possibleMovements);
+                        //Console.WriteLine("Undo");
+                        //Console.ReadKey();
 
                         Console.Clear();
                         Display.PrintGame(game);
@@ -110,6 +120,10 @@ namespace Xadrez_console
                         Console.ReadKey();
                     }
                 }
+
+                Console.Write("Game finished! ");
+                Console.ForegroundColor = (ConsoleColor)game.ActualPlayer; 
+                Console.Write($"{game.ActualPlayer} player won!");
             }
             catch (TableException e)
             {

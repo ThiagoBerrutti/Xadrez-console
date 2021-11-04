@@ -5,16 +5,15 @@ namespace Chess.Pieces
 {
     class Pawn : Piece
     {
-        public Pawn(Table table, Color color) : base(table, color)
+        public int Direction { get; private set; }
+        public ChessGame Game { get; private set; }
+
+        public Pawn(Table table, Color color, ChessGame game) : base(table, color)
         {
+            Direction = SetDirectionValue();
+            Game = game;
         }
 
-        //private bool CanPassant(Position pos)
-        //{
-        //    Piece piece = Table.GetPiece(pos);
-
-        //    if (piece != null && piece. == Pawn && piece.MovementsQuantity == 1 )
-        //}
 
         private bool CanMove(Position pos)
         {
@@ -24,7 +23,7 @@ namespace Chess.Pieces
             return p == null || p.Color != Color;
         }
 
-        private bool CanAttack(Position pos)
+        public bool CanAttack(Position pos)
         {
             if (!Table.IsPositionValid(pos)) return false;
             Piece p = Table.GetPiece(pos);
@@ -32,86 +31,79 @@ namespace Chess.Pieces
             return p != null && p.Color != Color;
         }
 
+        private int SetDirectionValue()
+        {
+            if (Color == Color.Black)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public override bool[,] PossibleMovements()
         {
-        //    bool[,] possibleMovements = new bool[Table.Lines, Table.Columns];
-        //    Position pos = new Position();
-        //    int direction;
+            bool[,] possibleMovements = new bool[Table.Lines, Table.Columns];
+            Position pos = new Position();
 
-        //    if (Color == Color.White)
-        //    {
-        //        direction = -1;
-        //    }
-        //    else direction = 1;
+            pos.SetValues(Position.Line, Position.Column + Direction);
+            if (CanMove(pos))
+            {
+                possibleMovements[pos.Line, pos.Column] = true;
 
-        //    pos.SetValues(Position.Line, Position.Column + 1 * direction);//casa a frente
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[pos.Line, pos.Column] = true;
-        //        if (MovementsQuantity == 0)
-        //        {
-        //            pos.SetValues(Position.Line, Position.Column + 2 * direction);//primeiro movimento
-        //            if (CanMove(pos))
-        //            {
-        //                possibleMovements[pos.Line, pos.Column] = true;
-        //            }
-        //        }
-        //    }
+                if (MovementsQuantity == 0) //1o movimento
+                {
+                    pos.SetValues(Position.Line, Position.Column + 2 * Direction);
+                    if (CanMove(pos))
+                    {
+                        possibleMovements[pos.Line, pos.Column] = true;
+                    }
+                }
+            }
 
-        //    pos.SetValues(Position.Line) 
+            //inimigo a esquerda
+            pos.SetValues(Position.Line - 1, Position.Column + Direction);
+            if (CanAttack(pos))
+            {
+                possibleMovements[pos.Line, pos.Column] = true;
+            }
 
-        //    pos.SetValues(Position.Line - 1, Position.Column - 1); //7
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line - 1, Position.Column - 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+            //inimigo a direita
+            pos.SetValues(Position.Line + 1, Position.Column + Direction);
+            if (CanAttack(pos))
+            {
+                possibleMovements[pos.Line, pos.Column] = true;
+            }
 
-        //    pos.SetValues(Position.Line, Position.Column - 1); //8
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line, Position.Column - 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+            //en passant esquerda
+            Piece enemy;
+            pos.SetValues(Position.Line - 1, Position.Column);
 
-        //    pos.SetValues(Position.Line + 1, Position.Column - 1); //9
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line + 1, Position.Column - 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+            if (Table.IsPositionValid(pos))
+            {
+                enemy = Table.GetPiece(pos);
 
-        //    pos.SetValues(Position.Line + 1, Position.Column); //6
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line + 1, Position.Column] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+                if (CanAttack(pos) && enemy == Game.VulnerableEnPassant)
+                {
+                    possibleMovements[pos.Line, pos.Column + Direction] = true;
+                }
+            }
 
-        //    pos.SetValues(Position.Line + 1, Position.Column + 1); //3
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line + 1, Position.Column + 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+            //en passant direita
+            pos.SetValues(Position.Line + 1, Position.Column);
+            if (Table.IsPositionValid(pos))
+            {
+                enemy = Table.GetPiece(pos);
 
-        //    pos.SetValues(Position.Line, Position.Column + 1); //2
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line, Position.Column + 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
+                if (CanAttack(pos) && enemy == Game.VulnerableEnPassant)
+                {
+                    possibleMovements[pos.Line, pos.Column + Direction] = true;
+                }
+            }
 
-        //    pos.SetValues(Position.Line - 1, Position.Column + 1); //1
-        //    if (CanMove(pos))
-        //    {
-        //        possibleMovements[Position.Line - 1, Position.Column + 1] = true;
-        //        Console.WriteLine("Possible position: " + pos.ToChessPosition() + ", " + pos);
-        //    }
-
-        //    if (MovementsQuantity = 0)
-
-                return new bool[8, 8];
+            return possibleMovements;
         }
 
         public override string ToString()

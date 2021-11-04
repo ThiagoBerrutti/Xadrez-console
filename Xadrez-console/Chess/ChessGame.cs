@@ -16,6 +16,7 @@ namespace Chess
         public Color ActualPlayer { get; private set; }
         public bool GameFinished { get; set; }
         public bool Check { get; set; }
+        public Piece VulnerableEnPassant;
 
 
         public HashSet<Piece> Pieces { get; private set; }
@@ -111,8 +112,45 @@ namespace Chess
             {
                 piece.IncreaseMovementsQuantity();
                 Table.InsertPiece(piece, destiny);
+
+                // #special movement
+                if (piece is King)
+                {
+                    // short castling
+                    if (destiny.Line == origin.Line + 2)
+                    {
+                        Position originRook = new Position(origin.Line + 3, origin.Column);
+                        Position destinyRook = new Position(origin.Line + 1, origin.Column);
+                        Piece rookCastling = Table.RemovePiece(originRook);
+
+                        rookCastling.IncreaseMovementsQuantity();
+                        Table.InsertPiece(rookCastling, destinyRook);
+                    }
+                    else
+                    // long castling
+                    if (destiny.Line == origin.Line - 2)
+                    {
+                        Position originRook = new Position(origin.Line - 4, origin.Column);
+                        Position destinyRook = new Position(origin.Line - 1, origin.Column);
+                        Piece rookCastling = Table.RemovePiece(originRook);
+
+                        rookCastling.IncreaseMovementsQuantity();
+                        Table.InsertPiece(rookCastling, destinyRook);
+                    }
+                }
+
+                if (piece is Pawn)
+                {
+                    Pawn pawn = (Pawn)piece;
+                    Pawn enemyPawnPossibleEnPassant = (Pawn)Table.GetPiece(pawn.Position.Line, pawn.Position.Column - pawn.Direction);
+
+                    if (enemyPawnPossibleEnPassant != null && enemyPawnPossibleEnPassant.Color != pawn.Color && enemyPawnPossibleEnPassant == VulnerableEnPassant)
+                    {
+                       capturedPiece = Table.RemovePiece(enemyPawnPossibleEnPassant.Position);
+                    }                    
+                }
             }
-           
+
             AddToCapturedPieces(capturedPiece);
 
             return capturedPiece;
@@ -120,44 +158,108 @@ namespace Chess
 
         public void ExecutePlay(Position origin, Position destiny)
         {
-            Piece capturedPiece = Move(origin, destiny);
-            ValidateMoveNotOnCheck(origin, destiny, capturedPiece);
-            if (IsOnCheck(Opponent(ActualPlayer))){
-            
-                Check = true;
-                                    
-                if (IsOnCheckMate(Opponent(ActualPlayer)))
+            Piece piece = Table.GetPiece(origin);
+            if (piece != null)
+            {
+                bool[,] possibleMovements = piece.PossibleMovements();
+                if (possibleMovements[destiny.Line, destiny.Column])
                 {
-                    
-                    GameFinished = true;
+                    Piece capturedPiece = Move(origin, destiny);
+                    ValidateMoveNotOnCheck(origin, destiny, capturedPiece);
+
+                    if (IsOnCheck(Opponent(ActualPlayer)))
+                    {
+                        Check = true;
+
+                        if (IsOnCheckMate(Opponent(ActualPlayer)))
+                        {
+                            GameFinished = true;
+                        }
+                    }
+                    else
+                    {
+                        Check = false;
+                    }
+
+                    if (!GameFinished)
+                    {
+                        Turn++;
+
+                        ChangeActualPlayer();
+                        piece = Table.GetPiece(destiny);
+                                               
+                        if (piece is Pawn)
+                        {
+                            Pawn pawn = (Pawn)piece;
+                            if (piece.MovementsQuantity == 1 && origin.Column == destiny.Column - 2 * pawn.Direction)
+                            {
+                                VulnerableEnPassant = piece;
+                            }
+                            else
+                            {
+                                VulnerableEnPassant = null;
+                            }
+
+                            if (piece.Position.Column * (pawn.Direction) + Table.Columns == Table.Columns)
+                            {
+                                HandlePromotion(piece);
+                            }
+                        }
+                    }
                 }
             }
-            else
-            {
-                Check = false;
-            }            
-
-            Turn++;
-            ChangeActualPlayer();
         }
-        
-        private void UndoPlay(Position origin, Position destiny, Piece capturedPiece)
+
+        public void UndoPlay(Position origin, Position destiny, Piece capturedPiece)
         {
-            Piece piece = Table.GetPiece(destiny);            
+            Piece piece = Table.RemovePiece(destiny);
+            Position capturedPieceOrigin = destiny;
 
             if (piece != null)
             {
-                Move(destiny, origin);
+                // special movement
+
+                if (piece is King)
+                {
+                    //short castling
+                    if (destiny.Line == origin.Line + 2)
+                    {
+                        Piece castlingRook = Table.RemovePiece(new Position(origin.Line + 1, origin.Column));
+                        Table.InsertPiece(castlingRook, new Position(7, destiny.Column));
+                        castlingRook.DecreaseMovementsQuantity();
+                    } //long castling
+                    else if (destiny.Line == origin.Line - 2)
+                    {
+                        Piece castlingRook = Table.RemovePiece(new Position(origin.Line - 1, origin.Column));
+                        Table.InsertPiece(castlingRook, new Position(0, destiny.Column));
+                        castlingRook.DecreaseMovementsQuantity();
+                    }                    
+                }
+
+                if (piece is Pawn)
+                {
+                    Pawn pawn = (Pawn)piece;
+                    Position enPassantCapturedPosition = new Position(pawn.Position.Line, pawn.Position.Column - pawn.Direction);
+
+                    if (capturedPiece.Position.Column == piece.Position.Column)
+                    {
+                        capturedPieceOrigin = enPassantCapturedPosition;
+                    }
+                }
+
+                Table.InsertPiece(piece, origin);
                 piece.DecreaseMovementsQuantity();
 
                 if (capturedPiece != null)
                 {
-                    Table.InsertPiece(capturedPiece, destiny);
+                    Table.InsertPiece(capturedPiece, capturedPieceOrigin);
                     CapturedPieces.Remove(capturedPiece);
                 }
+
+
             }
         }
-        
+
         public void SetPiece(Piece piece, Position pos)
         {
             Table.InsertPiece(piece, pos);
@@ -170,7 +272,7 @@ namespace Chess
                 SetPiece(new Rook(Table, color), new Position(0, initialLine));
                 SetPiece(new Knight(Table, color), new Position(1, initialLine));
                 SetPiece(new Bishop(Table, color), new Position(2, initialLine));
-                SetPiece(new King(Table, color), new Position(3, initialLine));
+                SetPiece(new King(Table, color, this), new Position(3, initialLine));
                 SetPiece(new Queen(Table, color), new Position(4, initialLine));
                 SetPiece(new Bishop(Table, color), new Position(5, initialLine));
                 SetPiece(new Knight(Table, color), new Position(6, initialLine));
@@ -179,11 +281,11 @@ namespace Chess
                 {
                     if (initialLine == 0)
                     {
-                        SetPiece(new Pawn(Table, color), new Position(i, 1));
+                        SetPiece(new Pawn(Table, color, this), new Position(i, 1));
                     }
                     else if (initialLine == 7)
                     {
-                        SetPiece(new Pawn(Table, color), new Position(i, 6));
+                        SetPiece(new Pawn(Table, color, this), new Position(i, 6));
                     }
                 }
 
@@ -195,7 +297,7 @@ namespace Chess
         public bool IsOnCheck(Color color)
         {
             HashSet<Piece> enemyPieces = GetPiecesOnTableByDifferentColor(color);
-            
+
             foreach (Piece enemy in enemyPieces)
             {
                 foreach (Position p in enemy.PossibleMovementsList())
@@ -210,7 +312,7 @@ namespace Chess
             return false;
         }
         public bool IsOnCheckMate(Color color)
-        {            
+        {
             HashSet<Piece> allyPieces = GetPiecesOnTableByColor(color);
 
             foreach (Piece piece in allyPieces)
@@ -219,19 +321,17 @@ namespace Chess
                 {
                     Position piecePosition = piece.Position;
                     Piece capturedPiece = null;
-                    try
-                    {
-                        capturedPiece = Move(piecePosition, possibleMovement);
-                        ValidateMoveNotOnCheck(piecePosition, possibleMovement, capturedPiece);
-                        
-                        //if pass the validation, it isn't on check anymore
 
+                    capturedPiece = Move(piecePosition, possibleMovement);
+
+                    if (!IsOnCheck(color))
+                    {
                         UndoPlay(piecePosition, possibleMovement, capturedPiece);
                         return false;
                     }
-                    catch (CheckException)
-                    {   
-                    }                    
+
+                    UndoPlay(piecePosition, possibleMovement, capturedPiece);
+
                 }
             }
             return true;
@@ -270,7 +370,8 @@ namespace Chess
         }
         private void ValidateMoveNotOnCheck(Position origin, Position destiny, Piece capturedPiece)
         {
-            if (IsOnCheck(ActualPlayer))
+            Color pieceMovedColor = Table.GetPiece(destiny).Color;
+            if (IsOnCheck(pieceMovedColor))
             {
                 UndoPlay(origin, destiny, capturedPiece);
                 throw new CheckException("You can't end your turn at check!");
@@ -293,6 +394,33 @@ namespace Chess
             {
                 return Color.White;
             }
+        }
+
+        private void HandlePromotion(Piece piece)
+        {
+            char promote = Display.ReadPromotion();
+            Piece newPiece;
+
+            switch (promote)
+            {
+                case 'b':
+                    newPiece = new Bishop(piece.Table, piece.Color);
+                    break;
+                case 'c':
+                    newPiece = new Knight(piece.Table, piece.Color);
+                    break;
+                case 't':
+                    newPiece = new Rook(piece.Table, piece.Color);
+                    break;
+                default:
+                    newPiece = new Queen(piece.Table, piece.Color);
+                    break;
+            }
+
+            Position newPiecePos = new Position(piece.Position.Line, piece.Position.Column);
+            piece = Table.RemovePiece(piece.Position);            
+            Pieces.Remove(piece);
+            SetPiece(newPiece, newPiecePos);
         }
     }
 }

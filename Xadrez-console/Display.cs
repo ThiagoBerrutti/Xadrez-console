@@ -8,19 +8,23 @@ using Chess.Pieces;
 using TableNS.Exceptions;
 
 
+
 namespace Xadrez_console
 {
     class Display
     {
+
         public static void PrintGame(ChessGame chessGame)
         {
             PrintTable(chessGame.Table);
             Console.WriteLine();
             Console.WriteLine("==============================");
-            Console.WriteLine();                
+            Console.WriteLine();
             PrintCapturedPieces(chessGame);
             Console.WriteLine();
             PrintTurn(chessGame);
+            Console.WriteLine($"Vulnerable en passant: {chessGame.VulnerableEnPassant}");
+
         }
 
         public static void PrintGame(ChessGame chessGame, bool[,] possibleMovements)
@@ -28,10 +32,11 @@ namespace Xadrez_console
             PrintTable(chessGame.Table, possibleMovements);
             Console.WriteLine();
             Console.WriteLine("==============================");
-            Console.WriteLine();            
+            Console.WriteLine();
             PrintCapturedPieces(chessGame);
             Console.WriteLine();
             PrintTurn(chessGame);
+            Console.WriteLine($"Vulnerable en passant: {chessGame.VulnerableEnPassant}");
         }
 
         //public static void PrintAllPossibleMovements(ChessGame game, Color color)
@@ -67,8 +72,6 @@ namespace Xadrez_console
             PrintPieceCollection(capturedWhite, (ConsoleColor)Color.White);
             Console.WriteLine();
         }
-                
-        
 
         public static void PrintPieceCollection(HashSet<Piece> collection, ConsoleColor color)
         {
@@ -202,6 +205,15 @@ namespace Xadrez_console
             int line = int.Parse(s[1] + "");
 
             return new ChessPosition(column, line);
+        }
+
+        public static char ReadPromotion()
+        {
+            Console.WriteLine($"Promotion!");
+            Console.Write("Want to turn into Bishop, Knight, Rook or Queen (B/C/T/Q)? ");
+            char promote = Console.ReadLine().ToLower()[0];
+
+            return promote;
         }
     }
 }

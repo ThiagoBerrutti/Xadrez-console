@@ -50,10 +50,9 @@ namespace Chess.Pieces
                 pos.Column--;
             }
 
-
             // 3         
             pos.SetValues(Position.Line + 1, Position.Column + 1);
-            for (pos.Column = Position.Column + 1; /*pos.Column >= 0 && pos.Line < Table.Lines && */CanMove(pos); pos.Column--)
+            for (pos.Column = Position.Column + 1; /*pos.Column >= 0 && pos.Line < Table.Lines && */CanMove(pos); pos.Column++)
             {
                 possibleMovements[pos.Line, pos.Column] = true;
                 if (Table.GetPiece(pos) != null && Table.GetPiece(pos).Color != Color)
